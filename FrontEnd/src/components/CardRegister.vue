@@ -8,38 +8,43 @@
 
     <div class="card-login-item">
       <q-stepper
-        v-model="registerStepper.step"
+        v-model="registerStepperStep"
         ref="stepper"
-        alternative-labels
-        :contracted="isDense"
+        contracted
         color="primary"
         animated
-        @before-transition="checkForm1"
       >
         <q-step
           :name="1"
           title="Dados pessoais"
-          icon="face"
-          :done="registerStepper.step > 1"
-          :error="stateForm1"
+          icon="person"
+          :done="registerStepperStep > 1"
+          :error="registerStepperStateForm1"
         >
-          <q-form ref="registerForm1">
-            <q-input
-              outlined
-              :dense="isDense"
+          <q-form ref="registerForm1" class="q-gutter-md">
+            <generic-input
               label="Nome"
-              type="text"
-              v-model="registerForm.name"
-              color="primary"
-              :rules="[requiredField, matriculaValid]"
-            ></q-input>
+              :model-value="registerFormName"
+              input-type="text"
+              icon-prepend="person"
+              :is-dense="isDense"
+              :rules="[requiredField, NomeValid]"
+            ></generic-input>
 
+            <generic-input
+              label="Data de Nascimento"
+              :model-value="registerFormNascimento"
+              input-type="date"
+              hint="DD/MM/YYYY"
+              :is-dense="isDense"
+              :rules="[requiredField, dataValid, maioridadeValid]"
+            ></generic-input>
             <q-input
               outlined
               :dense="isDense"
               label="Matricula"
               type="number"
-              v-model="registerForm.matricula"
+              v-model="registerFormMatricula"
               color="primary"
               :rules="[requiredField, matriculaValid]"
             ></q-input>
@@ -49,70 +54,51 @@
               :dense="isDense"
               label="E-mail"
               type="email"
-              v-model="registerForm.email"
+              v-model="registerFormEmail"
               color="primary"
               :rules="[requiredField, emailValid]"
             ></q-input>
           </q-form>
-
-          <q-stepper-navigation>
-            <q-btn
-              @click="
-                () => {
-                  registerStepper.done1 = true;
-                  registerStepper.step = 2;
-                }
-              "
-              color="primary"
-              label="Continue"
-            ></q-btn>
-          </q-stepper-navigation>
         </q-step>
 
         <q-step
           :name="2"
           title="Contato"
           icon="smartphone"
-          :done="registerStepper.step > 2"
+          :done="registerStepperStep > 2"
+          :error="registerStepperStateForm2"
         >
-          <q-stepper-navigation>
-            <q-btn
-              @click="
-                () => {
-                  done2 = true;
-                  step = 3;
-                }
-              "
-              color="primary"
-              label="Continue"
-            ></q-btn>
-            <q-btn
-              flat
-              @click="step = 1"
-              color="primary"
-              label="Back"
-              class="q-ml-sm"
-            ></q-btn>
-          </q-stepper-navigation>
+          <q-form ref="registerForm2"> </q-form>
         </q-step>
 
         <q-step
           :name="3"
           title="Contato"
           icon="security"
-          :done="registerStepper.step > 3"
+          :done="registerStepperStep > 3"
+          :error="registerStepperStateForm3"
         >
         </q-step>
+
+        <template v-slot:navigation>
+          <q-stepper-navigation class="flex-center">
+            <q-btn
+              v-if="registerStepperStep > 1"
+              @click="backStepper()"
+              color="primary"
+              flat
+              icon="arrow_back"
+              class="roundButton"
+            ></q-btn>
+            <q-btn
+              @click="nextStepper()"
+              color="primary"
+              :icon="registerStepperStep === 3 ? 'check' : 'arrow_forward'"
+              class="roundButton"
+            ></q-btn>
+          </q-stepper-navigation>
+        </template>
       </q-stepper>
-      <div class="row flex-center">
-        <q-btn
-          round
-          color="white"
-          text-color="primary"
-          class="roundButton"
-          icon="chevron_right"
-        ></q-btn>
-      </div>
     </div>
   </div>
 </template>
@@ -131,44 +117,60 @@
 }
 .roundButton {
   border-radius: 50%;
+  width: 40px;
+  height: 40px;
 }
 </style>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { QStepper } from 'quasar';
+import { defineComponent, PropType, ref } from 'vue';
+import GenericInput from './GenericInput.vue';
 
 export default defineComponent({
   name: 'CardRegister',
   props: {
     buttonSize: String,
     isDense: Boolean,
+    method: {
+      type: Function as PropType<() => void>,
+      required: true,
+    },
+  },
+
+  components: {
+    GenericInput,
   },
 
   setup() {
-    const toggleButton = ref<string>('cadastrar');
-
-    const registerStepper = {
-      step: 1,
-      done1: false,
-      done2: false,
-      done3: false,
-      stateform1: false,
-    };
-
-    const registerForm = {
-      name: '',
-      matricula: 1,
-      email: '',
-    };
-
     return {
-      toggleButton,
-      registerStepper,
-      registerForm,
+      registerStepperStep: ref<number>(1),
+      registerStepperDone1: ref<boolean>(false),
+      registerStepperDone2: ref<boolean>(false),
+      registerStepperDone3: ref<boolean>(false),
+      registerStepperStateForm1: ref<boolean>(false),
+      registerStepperStateForm2: ref<boolean>(false),
+      registerStepperStateForm3: ref<boolean>(false),
+
+      nameError: ref<boolean>(),
+      nascimentoError: ref<boolean>(),
+      emailError: ref<boolean>(),
+      telefoneError: ref<boolean>(),
+      passwordError: ref<boolean>(),
+
+      registerFormName: ref<string>(''),
+      registerFormNascimento: ref<string>(''),
+      registerFormEmail: ref<number>(),
+      registerFormMatricula: ref<string>(),
+      registerFormPassword: ref<string>(),
+      registerFormTelefone: ref<string>(),
     };
   },
   methods: {
     requiredField(val: string) {
       return !!val || 'Campo obrigatório';
+    },
+    NomeValid(val: string) {
+      return val.length >= 12 || 'O nome deve possuir ao menos 12 caracteres';
     },
     matriculaValid(val: string) {
       return val.length === 12 || 'A matrícula deve possuir 12 caracteres';
@@ -177,20 +179,98 @@ export default defineComponent({
       const regex: RegExp = /^[a-zA-Z0-9._%+-]+@tjam\.jus\.br$/;
       return regex.test(val) || 'E-mail deve ser um endereço @tjam.jus.br';
     },
+    dataValid(val: string) {
+      return (
+        this.validaNascimento(val) || 'Data inválida. Use o formato dd/mm/yyyy.'
+      );
+    },
+    maioridadeValid(val: string) {
+      return this.validaMaioridade(val) || 'Você deve ter pelo menos 18 anos.';
+    },
 
-    checkForm1() {
-      const registerForm1 = this.$refs.registerForm1 as unknown as {
-        validate: () => Promise<boolean>;
-      };
-      if (registerForm1) {
-        registerForm1.validate().then((success) => {
-          if (success) {
-            this.registerStepper.stateform1 = false;
+    validaNascimento(dateString: string): boolean {
+      const [year, month, day] = dateString.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+      );
+    },
+
+    validaMaioridade(dateString: string): boolean {
+      if (!this.validaNascimento(dateString)) return false;
+
+      const [year, month, day] = dateString.split('-').map(Number);
+      const birthDate = new Date(year, month - 1, day);
+
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+
+      // Ajusta a idade se a data de aniversário ainda não ocorreu este ano
+      const hasHadBirthdayThisYear =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() >= birthDate.getDate());
+
+      return age > 18 || (age === 18 && hasHadBirthdayThisYear);
+    },
+
+    checkForm() {
+      const registerForms = [
+        {
+          form: this.$refs.registerForm1 as unknown as {
+            validate: () => Promise<boolean>;
+          },
+          state: 'stateForm1',
+        },
+        {
+          form: this.$refs.registerForm2 as unknown as {
+            validate: () => Promise<boolean>;
+          },
+          state: 'stateForm2',
+        },
+        {
+          form: this.$refs.registerForm3 as unknown as {
+            validate: () => Promise<boolean>;
+          },
+          state: 'stateForm3',
+        },
+      ];
+      const currentStep = this.registerStepperStep;
+      const currentForm = registerForms[currentStep - 1];
+
+      if (currentForm && currentForm.form) {
+        currentForm.form.validate().then((success: boolean) => {
+          if (currentForm.state == 'stateForm1') {
+            this.registerStepperStateForm1 = !success;
+          } else if (currentForm.state == 'stateForm2') {
+            this.registerStepperStateForm2 = !success;
           } else {
-            this.registerStepper.stateform1 = true;
+            this.registerStepperStateForm3 = !success;
           }
         });
       }
+    },
+    nextStepper() {
+      this.checkForm();
+      if (this.registerStepperStep === 1) {
+        this.registerStepperDone1 = true;
+      } else if (this.registerStepperStep === 2) {
+        this.registerStepperDone2 = true;
+      } else {
+        this.registerStepperDone3 = true;
+        this.$props.method();
+      }
+      (this.$refs.stepper as QStepper).next();
+    },
+    backStepper() {
+      if (this.registerStepperStep === 2) {
+        this.registerStepperDone1 = false;
+      } else if (this.registerStepperStep === 3) {
+        this.registerStepperDone2 = false;
+      }
+      (this.$refs.stepper as QStepper).previous();
     },
   },
 });

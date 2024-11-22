@@ -23,41 +23,40 @@
         </div>
       </q-toolbar>
     </q-header>
-    <q-page-container>
-      <q-page id="flex-container">
-        <div id="background-image" class="background-image shadow-3"></div>
+    <q-page-container id="flex-container">
+      <div id="background-image" class="background-image shadow-3"></div>
 
-        <div id="card-login" class="card-login">
-          <p class="text-weight-bolder text-h4">
-            Bem-vindo ao
-            <span style="color: #367aff">Sistema de Ponto Eletrônico TJAM</span>
-          </p>
+      <div id="card-container" class="card-container">
+        <p class="text-weight-bolder text-h4">
+          Bem-vindo ao
+          <span style="color: #367aff">Sistema de Ponto Eletrônico TJAM</span>
+        </p>
 
-          <q-btn-toggle
-            v-model="toggleButton"
-            size="lg"
-            toggle-color="primary"
-            text-color="grey"
-            :dense="isDense"
-            flat
-            @click="invertOrder"
-            :options="[
-              { label: 'Entrar', value: 1 },
-              { label: 'Cadastrar', value: 2 },
-            ]"
-          />
-          <card-login
-            v-if="toggleButton === 1"
-            :buttonSize="buttonSize"
-            :isDense="isDense"
-          ></card-login>
-          <card-register
-            v-if="toggleButton === 2"
-            :buttonSize="buttonSize"
-            :isDense="isDense"
-          ></card-register>
-        </div>
-      </q-page>
+        <q-btn-toggle
+          v-model="toggleButton"
+          size="lg"
+          toggle-color="primary"
+          text-color="grey"
+          :dense="isDense"
+          flat
+          :options="[
+            { label: 'Entrar', value: 1 },
+            { label: 'Cadastrar', value: 2 },
+          ]"
+        />
+        <card-login
+          v-if="toggleButton === 1"
+          :buttonSize="buttonSize"
+          :isDense="isDense"
+          :method="changeView"
+        ></card-login>
+        <card-register
+          v-if="toggleButton === 2"
+          :buttonSize="buttonSize"
+          :isDense="isDense"
+          :method="changeView"
+        ></card-register>
+      </div>
     </q-page-container>
   </q-layout>
 </template>
@@ -70,7 +69,7 @@
   }
 }
 
-.q-page {
+.q-page-container {
   display: flex;
   justify-content: space-around;
   flex-direction: row;
@@ -88,7 +87,7 @@
   position: relative;
 }
 
-.card-login {
+.card-container {
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -123,22 +122,14 @@ export default defineComponent({
   },
 
   setup() {
-    const emailInput = ref('');
-    const passwordInput = ref('');
-    const rememberCheckbox = ref(false);
-    const passwordVisible = ref(false);
-    const buttonSize = ref('md');
-    const isDense = ref(false);
-    const toggleButton = ref<number>(1);
-
     return {
-      emailInput,
-      passwordInput,
-      rememberCheckbox,
-      passwordVisible,
-      buttonSize,
-      isDense,
-      toggleButton,
+      emailInput: ref(''),
+      passwordInput: ref(''),
+      rememberCheckbox: ref(false),
+      passwordVisible: ref(false),
+      buttonSize: ref('md'),
+      isDense: ref(false),
+      toggleButton: ref<number>(1),
     };
   },
 
@@ -151,6 +142,13 @@ export default defineComponent({
       this.windowWidth = window.innerWidth;
     },
 
+    changeView(): void {
+      if (this.toggleButton === 2) {
+        this.toggleButton = 1;
+      } else {
+        this.toggleButton = 2;
+      }
+    },
     invertOrder(): void {
       const flexContainer = document.getElementById('flex-container');
 
@@ -185,15 +183,18 @@ export default defineComponent({
         this.buttonSize = 'md';
       }
     },
+    toggleButton(oldValue, newValue) {
+      if (
+        (oldValue === 1 && newValue === 2) ||
+        (oldValue === 2 && newValue === 1)
+      ) {
+        this.invertOrder();
+      }
+    },
   },
 
   mounted() {
     window.addEventListener('resize', this.handleWindowsSizeChange);
-    if (this.windowWidth < 925) {
-      this.isDense = true;
-    } else {
-      this.isDense = false;
-    }
   },
 
   deactivated() {
