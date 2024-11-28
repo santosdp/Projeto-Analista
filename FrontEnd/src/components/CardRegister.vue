@@ -103,7 +103,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .card-content {
   padding: 20px;
 }

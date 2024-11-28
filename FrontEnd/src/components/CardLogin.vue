@@ -71,7 +71,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .card-content {
   padding: 20px;
 }
@@ -124,7 +124,7 @@ export default defineComponent({
 
   methods: {
     onSubmit(): void {
-      this.$router.push('login');
+      this.$router.push('home');
     },
 
     requiredField(val: string) {
