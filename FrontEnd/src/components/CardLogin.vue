@@ -1,5 +1,5 @@
 <template>
-  <div class="card-content column justify-evenly">
+  <div class="card-content column justify-evenly items-center">
     <div class="card-login-item">
       <p class="text-body2">
         Bem-vindo ao sistema de acesso do TJAM, para entrar na Intranet primeira
@@ -7,47 +7,39 @@
       </p>
     </div>
 
-    <div class="card-login-item">
+    <div class="card-login-item column items-center">
       <q-form @submit.prevent="onSubmit">
-        <q-input
-          outlined
-          :dense="isDense"
+        <generic-input
           label="E-mail"
-          type="email"
+          :is-outlined="true"
           v-model="emailInput"
-          color="primary"
+          input-type="email"
+          icon-prepend="mail"
+          hint="Necessário utilizar seu e-mail TJAM (@tjam.jus.br)."
+          :is-dense="isDense"
           :rules="[requiredField, emailValid]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="email" color="dark"></q-icon>
-          </template>
-        </q-input>
+          class="input-login"
+        ></generic-input>
 
-        <q-input
-          outlined
-          :dense="isDense"
+        <generic-input
           label="Senha"
-          :type="passwordVisible ? 'text' : 'password'"
+          :is-outlined="true"
           v-model="passwordInput"
-          color="primary"
-          :rules="[requiredField]"
-        >
-          <template v-slot:prepend>
-            <q-icon
-              name="key"
-              style="transform: rotate(135deg)"
-              color="dark"
-            ></q-icon>
-          </template>
-          <template v-slot:append>
-            <q-icon
-              :name="passwordVisible ? 'visibility' : 'visibility_off'"
-              class="cursor-pointer"
-              @click="passwordVisible = !passwordVisible"
-              color="dark"
-            ></q-icon>
-          </template>
-        </q-input>
+          :input-type="visiblePwd ? 'password' : 'text'"
+          :icon-append="visiblePwd ? 'visibility_off' : 'visibility'"
+          :visible-icon="visibleIcon"
+          hint="Ao menos 8 e no máximo 16 caracteres, letras maiúsculas e minúsculas, números e pelo menos um caractere especial, como ! @ #."
+          :is-dense="isDense"
+          class="input-login"
+          :rules="[
+            requiredField,
+            senhaValid1,
+            senhaValid2,
+            senhaValid3,
+            senhaValid4,
+            senhaValid5,
+          ]"
+        ></generic-input>
 
         <div class="row items-center justify-between">
           <q-checkbox
@@ -75,6 +67,10 @@
 .card-content {
   padding: 20px;
 }
+.input-login {
+  width: 80vw;
+  max-width: 300px;
+}
 .card-login-item {
   max-width: 400px;
 }
@@ -93,6 +89,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import GenericInput from './GenericInput.vue';
 
 export default defineComponent({
   name: 'CardLogin',
@@ -102,6 +99,10 @@ export default defineComponent({
     isDense: Boolean,
   },
 
+  components: {
+    GenericInput,
+  },
+
   data() {
     return {
       windowWidth: window.innerWidth,
@@ -109,16 +110,13 @@ export default defineComponent({
   },
 
   setup() {
-    const emailInput = ref<string>('');
-    const passwordInput = ref<string>('');
-    const rememberCheckbox = ref<boolean>(false);
-    const passwordVisible = ref<boolean>(false);
-
     return {
-      emailInput,
-      passwordInput,
-      rememberCheckbox,
-      passwordVisible,
+      emailInput: ref<string>(''),
+      passwordInput: ref<string>(''),
+      rememberCheckbox: ref<boolean>(false),
+      passwordVisible: ref<boolean>(false),
+
+      visiblePwd: ref<boolean>(true),
     };
   },
 
@@ -134,6 +132,39 @@ export default defineComponent({
     emailValid(val: string) {
       const regex: RegExp = /^[a-zA-Z0-9._%+-]+@tjam\.jus\.br$/;
       return regex.test(val) || 'E-mail deve ser um endereço @tjam.jus.br';
+    },
+
+    senhaValid1(val: string) {
+      const regex: RegExp = /[a-z]/;
+      return (
+        regex.test(val) || 'A senha deve conter ao menos uma letra minúscula.'
+      );
+    },
+    senhaValid2(val: string) {
+      const regex: RegExp = /[A-Z]/;
+      return (
+        regex.test(val) || 'A senha deve conter ao menos uma letra maiúscula.'
+      );
+    },
+    senhaValid3(val: string) {
+      const regex: RegExp = /\d/;
+      return regex.test(val) || 'A senha deve conter ao menos um números.';
+    },
+    senhaValid4(val: string) {
+      const regex: RegExp = /[!@#$%^&*(),.?":{}|<>]/;
+      return (
+        regex.test(val) || 'A senha deve conter ao menos um caractere especial.'
+      );
+    },
+    senhaValid5(val: string) {
+      return (
+        (val.length >= 8 && val.length <= 16) ||
+        'A senha deve conter 8 à 16 caracteres.'
+      );
+    },
+
+    visibleIcon() {
+      this.visiblePwd = !this.visiblePwd;
     },
   },
 });

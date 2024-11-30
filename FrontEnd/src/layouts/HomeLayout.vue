@@ -4,7 +4,6 @@
       v-model="drawer"
       show-if-above
       :width="250"
-      :breakpoint="600"
       class="bg-white text-white"
     >
       <q-scroll-area class="scroll-area">
@@ -104,7 +103,13 @@
     </q-page-container>
   </q-layout>
 </template>
-<style>
+<style scoped>
+.q-page-container {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
 .q-drawer {
   border-right: 0.5px solid #798aa35b;
 }
@@ -142,7 +147,7 @@ export default defineComponent({
       menuAtual: ref<string>('Dashboard'),
       drawer: ref<boolean>(true),
       nomeUsuario: ref<string>('Daniel Pereira'),
-      cargoUsuario: ref<string>('Funcionário'),
+      cargoUsuario: ref<string>('Administrador'),
       dataLocal: ref<string>(''),
       notificacoes: [],
       menuList: [
@@ -167,9 +172,14 @@ export default defineComponent({
           path: '/home/perfil',
         },
         {
-          icon: 'group',
-          label: 'Funcionários',
-          path: '/home/funcionarios',
+          icon: 'apartment',
+          label: 'Departamento',
+          path: '/home/departamento',
+        },
+        {
+          icon: 'content_paste',
+          label: 'Justificar',
+          path: '/home/justificar',
         },
         {
           icon: 'logout',
@@ -194,7 +204,8 @@ export default defineComponent({
     },
 
     verifyScreen(): void {
-      this.isDense = this.windowWidth < 600;
+      this.isDense = true;
+      this.windowWidth = window.innerWidth;
     },
 
     setData(): void {
@@ -229,9 +240,15 @@ export default defineComponent({
     },
   },
 
+  watch: {
+    windowWidth(newValue) {
+      this.isDense = newValue < 700;
+    },
+  },
+
   mounted() {
-    window.addEventListener('resize', this.verifyScreen);
     this.verifyScreen();
+    window.addEventListener('resize', this.verifyScreen);
     this.setData();
     this.verifyMenu();
   },

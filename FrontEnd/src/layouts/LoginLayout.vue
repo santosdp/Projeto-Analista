@@ -23,8 +23,12 @@
         </div>
       </q-toolbar>
     </q-header>
-    <q-page-container id="flex-container">
-      <div id="background-image" class="background-image shadow-3"></div>
+    <q-page-container id="flex-container" class="bg-white">
+      <div
+        id="background-image"
+        class="background-image shadow-3"
+        alt="Fachada do TJAM"
+      ></div>
 
       <div id="card-container" class="card-container">
         <p class="text-weight-bolder text-h4">
@@ -61,7 +65,7 @@
   </q-layout>
 </template>
 
-<style>
+<style scoped>
 .q-header {
   .header-icons {
     width: 10vw;
@@ -73,7 +77,6 @@
   display: flex;
   justify-content: space-around;
   flex-direction: row;
-  background-color: #ffffff;
 }
 
 .background-image {
@@ -93,11 +96,26 @@
   flex-direction: column;
   align-items: center;
   justify-content: start;
+  align-items: center;
   height: auto;
   width: 35vw;
   padding-top: 20px;
   padding-left: 20px;
   position: relative;
+}
+
+@media screen and (max-width: 700px) {
+  .q-page-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .background-image {
+    width: 90vw;
+    height: 125px;
+  }
+  .card-container {
+    width: 90vw;
+  }
 }
 </style>
 
@@ -128,7 +146,7 @@ export default defineComponent({
       rememberCheckbox: ref(false),
       passwordVisible: ref(false),
       buttonSize: ref('md'),
-      isDense: ref(false),
+      isDense: ref(true),
       toggleButton: ref<number>(1),
     };
   },
@@ -138,8 +156,15 @@ export default defineComponent({
       this.$router.push('login');
     },
 
-    handleWindowsSizeChange(): void {
+    verifyScreen(): void {
       this.windowWidth = window.innerWidth;
+      if (this.windowWidth < 700) {
+        this.isDense = true;
+        this.buttonSize = 'sm';
+      } else {
+        this.isDense = false;
+        this.buttonSize = 'md';
+      }
     },
 
     changeView(): void {
@@ -174,19 +199,10 @@ export default defineComponent({
   },
 
   watch: {
-    windowWidth(newValue) {
-      if (newValue < 925) {
-        this.isDense = true;
-        this.buttonSize = 'sm';
-      } else {
-        this.isDense = false;
-        this.buttonSize = 'md';
-      }
-    },
     toggleButton(oldValue, newValue) {
       if (
-        (oldValue === 1 && newValue === 2) ||
-        (oldValue === 2 && newValue === 1)
+        (oldValue === 1 && newValue === 2 && !this.isDense) ||
+        (oldValue === 2 && newValue === 1 && !this.isDense)
       ) {
         this.invertOrder();
       }
@@ -194,11 +210,12 @@ export default defineComponent({
   },
 
   mounted() {
-    window.addEventListener('resize', this.handleWindowsSizeChange);
+    this.verifyScreen();
+    window.addEventListener('resize', this.verifyScreen);
   },
 
   deactivated() {
-    window.removeEventListener('resize', this.handleWindowsSizeChange);
+    window.removeEventListener('resize', this.verifyScreen);
   },
 });
 </script>

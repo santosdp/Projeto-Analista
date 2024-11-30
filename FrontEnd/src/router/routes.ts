@@ -7,6 +7,8 @@ import DashboardPage from 'src/pages/DashboardPage.vue';
 import ConsultaPage from 'src/pages/ConsultaPage.vue';
 import PerfilPage from 'src/pages/PerfilPage.vue';
 import LoginLayout from 'src/layouts/LoginLayout.vue';
+import DepartamentoPage from 'src/pages/DepartamentoPage.vue';
+import JustificarPage from 'src/pages/JustificarPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -34,6 +36,14 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'perfil',
         component: PerfilPage,
+      },
+      {
+        path: 'departamento',
+        component: DepartamentoPage,
+      },
+      {
+        path: 'justificar',
+        component: JustificarPage,
       },
     ],
   },

@@ -1,29 +1,15 @@
 <template>
   <q-page class="column items-center justify-start">
     <div class="q-pt-md q-px-lg row justify-between full-width">
-      <p class="text-weight-medium text-h6 text-secondary">Registrar</p>
+      <p class="text-weight-bold text-h6 text-secondary">
+        Registrar Ponto Eletrônico
+      </p>
       <p class="text-weight-light text-subtitle1 text-secondary">
         {{ data }}
       </p>
     </div>
 
-    <div class="full-width">
-      <p
-        class="text-weight-medium text-body1 text-secondary q-mb-none text-center q-pb-sm"
-      >
-        Marcações de Hoje
-      </p>
-      <card-registros
-        :registros="[registro1, registro2, registro3, registro4]"
-        :is-dense="isDense"
-      ></card-registros>
-    </div>
-
     <q-form @submit.prevent="onSubmit" class="q-pa-lg q-my-md register-form">
-      <p class="text-weight-bold text-h6 text-secondary text-center">
-        Registrar Ponto
-      </p>
-
       <p class="text-subtitle text-dark">
         Confirme sua matricula para realizar a marcação de ponto.
       </p>
@@ -33,7 +19,7 @@
         :model-value="matriculaForm"
         input-type="number"
         icon-prepend="badge"
-        :is-dense="isDense"
+        :is-dense="true"
         :rules="[requiredField, matriculaValid]"
       ></generic-input>
 
@@ -44,6 +30,19 @@
         color="secondary"
       ></q-btn>
     </q-form>
+
+    <div class="full-width">
+      <p
+        class="text-weight-medium text-body1 text-secondary q-mb-none text-center q-pb-sm"
+      >
+        Marcações de Hoje
+      </p>
+      <card-registros
+        :registros="[registro1, registro2, registro3, registro4]"
+        :is-dense="isDense"
+        :cards-registro="cardsRegistro"
+      ></card-registros>
+    </div>
   </q-page>
 </template>
 <style>
@@ -78,6 +77,28 @@ export default defineComponent({
       registro3: ref<string>('13h00'),
       registro4: ref<string>('17h00'),
       registros: ['08h00', '12h00', '13h00', '17h00'],
+      cardsRegistro: [
+        {
+          title: 'Entrada',
+          color: 'bg-light-blue-3',
+          textColor: 'text-blue-10',
+        },
+        {
+          title: 'Intervalo',
+          color: 'bg-amber-3',
+          textColor: 'text-deep-orange-10',
+        },
+        {
+          title: 'Retorno',
+          color: 'bg-indigo-3',
+          textColor: 'text-deep-purple-10',
+        },
+        {
+          title: 'Saída',
+          color: 'bg-light-green-3',
+          textColor: 'text-teal-10',
+        },
+      ],
     };
   },
   methods: {

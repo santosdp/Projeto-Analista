@@ -2,7 +2,7 @@
   <div class="row justify-center">
     <template v-for="(cardItem, index) in cardsRegistro" :key="index">
       <q-card
-        class="card-info q-mx-md q-my-xs"
+        class="card-info q-mx-sm q-my-xs"
         :class="registros[index] ? cardItem.color : 'bg-grey-4'"
       >
         <q-card-section>
@@ -33,18 +33,27 @@
   border: 1px solid #798aa3;
   border-radius: 10px;
 }
+
 @media screen and (max-width: 600px) {
   .card-info {
-    width: 130px;
-    height: 130px;
+    width: 115px;
+    height: 115px;
   }
-  .q-card-section {
-    margin: 0px 10px;
+  .q-card__section {
+    padding: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }
 </style>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
+
+interface Card {
+  title: string;
+  color: string;
+  textColor: string;
+}
 
 export default defineComponent({
   name: 'CardRegistros',
@@ -54,33 +63,13 @@ export default defineComponent({
       type: Array as PropType<string[]>,
       required: true,
     },
+    cardsRegistro: {
+      type: Array as PropType<Card[]>,
+      required: true,
+    },
   },
   setup() {
-    return {
-      horariosReferencia: ['08:00', '12:00', '13:00', '17:00'],
-      cardsRegistro: [
-        {
-          title: 'Entrada',
-          color: 'bg-light-blue-4',
-          textColor: 'text-blue-10',
-        },
-        {
-          title: 'Intervalo',
-          color: 'bg-amber-4',
-          textColor: 'text-deep-orange-10',
-        },
-        {
-          title: 'Retorno',
-          color: 'bg-indigo-4',
-          textColor: 'text-deep-purple-10',
-        },
-        {
-          title: 'Saída',
-          color: 'bg-light-green-4',
-          textColor: 'text-teal-10',
-        },
-      ],
-    };
+    return {};
   },
 });
 </script>

@@ -3,22 +3,21 @@
     borderless
     stack-label
     :label="label"
-    color="primary"
+    color="secondary"
     :dense="isDense"
     :error="modelError"
     class="q-my-none"
   >
     <template v-slot:control>
       <q-input
-        outlined
-        filled
+        :outlined="isOutlined"
         :aria-label="label"
         :type="inputType"
-        v-model="modelValueLocal"
-        @input="updateValue"
+        v-model="localValue"
         :hint="hint"
+        :dense="isDense"
         :mask="mask"
-        fill-mask
+        :readonly="isReadonly"
         :rules="rules"
         class="full-width q-my-sm"
       >
@@ -26,7 +25,7 @@
           <q-icon :name="iconPrepend"></q-icon>
         </template>
         <template v-if="iconAppend" v-slot:append>
-          <q-icon :name="iconAppend" />
+          <q-icon :name="iconAppend" @click="visibleIcon" id="icon-append" />
         </template>
       </q-input>
       <div v-if="modelError" class="text-negative">
@@ -35,6 +34,17 @@
     </template>
   </q-field>
 </template>
+
+<style scoped>
+.q-field__label {
+  font-weight: 800;
+  font-size: 18px;
+}
+.q-field__native {
+  text-align: center;
+}
+</style>
+
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue';
 
@@ -46,7 +56,7 @@ export default defineComponent({
       required: true,
     },
     modelValue: {
-      type: [String, Number] as PropType<string | number>,
+      type: [String, Number] as PropType<string | number | undefined>,
       required: true,
     },
     inputType: {
@@ -66,7 +76,13 @@ export default defineComponent({
     mask: String,
     iconAppend: String,
     iconPrepend: String,
-    isDense: Boolean,
+    isReadonly: Boolean,
+    isOutlined: Boolean,
+    visibleIcon: Function as PropType<() => void>,
+    isDense: {
+      type: Boolean,
+      required: true,
+    },
     rules: {
       type: Array as PropType<Array<(value: string) => boolean | string>>,
       required: true,
@@ -75,24 +91,29 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const modelError = ref<boolean>();
-    const modelValueLocal = ref(props.modelValue);
+    const localValue = ref(props.modelValue);
 
     watch(
       () => props.modelValue,
       (newValue) => {
-        modelValueLocal.value = newValue;
+        localValue.value = newValue;
       }
     );
 
-    const updateValue = (value: string | number | Date) => {
-      emit('update:modelValue', value);
-    };
+    watch(localValue, (newValue) => {
+      emit('update:modelValue', newValue);
+    });
 
     return {
       modelError,
-      modelValueLocal,
-      updateValue,
+      localValue,
     };
+  },
+
+  mounted() {
+    if (this.visibleIcon) {
+      document.getElementById('icon-append')?.classList.add('cursor-pointer');
+    }
   },
 });
 </script>

@@ -11,53 +11,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed, onMounted, ref } from 'vue';
-
-export default defineComponent({
-  name: 'ClockComponent',
-  setup() {
-    const time = ref(new Date());
-
-    onMounted(() => {
-      setInterval(() => {
-        time.value = new Date();
-      }, 1000);
-    });
-
-    const hourStyle = computed(() => {
-      const hours = time.value.getHours() % 12;
-      const minutes = time.value.getMinutes();
-      const degrees = hours * 30 + minutes * 0.5;
-      return { transform: `rotate(${degrees}deg)` };
-    });
-
-    const minuteStyle = computed(() => {
-      const minutes = time.value.getMinutes();
-      const seconds = time.value.getSeconds();
-      const degrees = minutes * 6 + seconds * 0.1;
-      return { transform: `rotate(${degrees}deg)` };
-    });
-
-    const secondStyle = computed(() => {
-      const seconds = time.value.getSeconds();
-      const degrees = seconds * 6;
-      return { transform: `rotate(${degrees}deg)` };
-    });
-
-    const formattedTime = computed(() => {
-      const hours = time.value.toLocaleTimeString('pt-br', { hour: 'numeric' });
-      const minutes = time.value.toLocaleTimeString('pt-br', {
-        minute: 'numeric',
-      });
-      return hours + 'h' + minutes;
-    });
-
-    return { hourStyle, minuteStyle, secondStyle, formattedTime };
-  },
-});
-</script>
-
 <style scoped>
 .clock {
   width: 200px;
@@ -108,4 +61,58 @@ export default defineComponent({
   width: 50%;
   background-color: #dc2d7c;
 }
+
+@media screen and (max-width: 600px) {
+  .clock {
+    width: 100px;
+    height: 100px;
+  }
+}
 </style>
+
+<script lang="ts">
+import { defineComponent, computed, onMounted, ref } from 'vue';
+
+export default defineComponent({
+  name: 'ClockComponent',
+  setup() {
+    const time = ref(new Date());
+
+    onMounted(() => {
+      setInterval(() => {
+        time.value = new Date();
+      }, 1000);
+    });
+
+    const hourStyle = computed(() => {
+      const hours = time.value.getHours() % 12;
+      const minutes = time.value.getMinutes();
+      const degrees = hours * 30 + minutes * 0.5;
+      return { transform: `rotate(${degrees}deg)` };
+    });
+
+    const minuteStyle = computed(() => {
+      const minutes = time.value.getMinutes();
+      const seconds = time.value.getSeconds();
+      const degrees = minutes * 6 + seconds * 0.1;
+      return { transform: `rotate(${degrees}deg)` };
+    });
+
+    const secondStyle = computed(() => {
+      const seconds = time.value.getSeconds();
+      const degrees = seconds * 6;
+      return { transform: `rotate(${degrees}deg)` };
+    });
+
+    const formattedTime = computed(() => {
+      const hours = time.value.toLocaleTimeString('pt-br', { hour: 'numeric' });
+      const minutes = time.value.toLocaleTimeString('pt-br', {
+        minute: 'numeric',
+      });
+      return hours + 'h' + minutes;
+    });
+
+    return { hourStyle, minuteStyle, secondStyle, formattedTime };
+  },
+});
+</script>
