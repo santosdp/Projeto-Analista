@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +28,11 @@ public class Usuario implements UserDetails {
   private Long matricula;
   private String telefone;
   private String email;
+  private String email_recuperacao;
   private String senha;
+  private String cpf;
+  private LocalDate data_nascimento;
+  private LocalDate create_at;
 
   @Enumerated(EnumType.STRING)
   private Cargo cargo;
@@ -44,14 +49,18 @@ public class Usuario implements UserDetails {
   @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Presenca> presencas = new ArrayList<>();
 
-  public Usuario(String nome, Long matricula, String telefone, String email, String senha){
+  public Usuario(String nome, Long matricula, String telefone, String email, String senha, String cpf, LocalDate nascimento, String email_recuperacao){
     this.nome = nome;
     this.matricula = matricula;
     this.telefone = telefone;
     this.email = email;
+    this.email_recuperacao = email_recuperacao;
     this.senha = senha;
     this.cargo = Cargo.ROLE_USER;
     this.ativo = true;
+    this.cpf = cpf;
+    this.data_nascimento = nascimento;
+    this.create_at = LocalDate.now();
     this.gerenteDoDepartamento = null;
   }
 

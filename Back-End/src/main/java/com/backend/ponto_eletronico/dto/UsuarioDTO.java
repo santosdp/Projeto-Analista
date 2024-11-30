@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public record UsuarioDTO(
     @NotBlank(message = "Nome é obrigatório.")
-    @Size(max = 100, message = "Nome ultrapassou 100 caracteres.")
+    @Size(max = 120, message = "Nome ultrapassou 120 caracteres.")
     String nome,
 
     @NotNull(message = "Matricula é obrigatório.")
@@ -16,10 +18,16 @@ public record UsuarioDTO(
     Long matricula,
 
     @NotBlank(message = "E-mail é obrigatório.")
-    @Size(max = 50, message = "E-mail ultrapassou 50 caracteres.")
+    @Size(max = 100, message = "E-mail ultrapassou 100 caracteres.")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@tjam\\.jus\\.br$\n", message = "Obrigatório utilizar e-mail do TJAM.")
     String email,
 
+    @NotBlank(message = "E-mail é obrigatório.")
+    @Size(max = 100, message = "E-mail ultrapassou 100 caracteres.")
+    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Email inválido.")
+    String email_recuperacao,
+
+    @NotBlank(message = "Telefone é obrigatório.")
     @Pattern(regexp = "^\\(?\\d{2}\\)?[\\s-]?\\d{4,5}[\\s-]?\\d{4}$\n", message = "Apenas telefones brasileiros são aceitos.")
     String telefone,
 
@@ -28,6 +36,14 @@ public record UsuarioDTO(
     String senha,
 
     @NotNull(message = "Id do Departamento é obrigatório.")
-    Long id_departamento
+    Long id_departamento,
+
+    @NotBlank(message = "CPF é obrigatório.")
+    @Pattern(regexp = "^(?!.*(\\d)(?:-?\\1){2})\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{11}$")
+    String cpf,
+
+    @NotBlank(message = "Data de nascimento é obrigatório.")
+    LocalDate data_nascimento
+
 ) {
 }

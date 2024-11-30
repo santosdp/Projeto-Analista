@@ -11,9 +11,10 @@ public record DetalharPresencaDTO(
     LocalTime hora_intervalo,
     LocalTime hora_retorno,
     LocalTime hora_saida,
-    String justificativa
+    String justificativa,
+    Long presenca
 ) {
   public DetalharPresencaDTO(Presenca presenca) {
-    this(presenca.getDia(), presenca.getHora_entrada(), presenca.getHora_intervalo(), presenca.getHora_retorno(), presenca.getHora_saida(), presenca.getJustificativa());
+    this(presenca.getDia(), presenca.getHora_entrada(), presenca.getHora_intervalo(), presenca.getHora_retorno(), presenca.getHora_saida(), presenca.getJustificativa(), presenca.calcularAproveitamento());
   }
 }

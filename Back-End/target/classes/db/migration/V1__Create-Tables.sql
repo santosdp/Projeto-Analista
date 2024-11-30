@@ -1,16 +1,13 @@
 CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(120) NOT NULL,
-    matricula BIGINT NOT NULL UNIQUE,
+    nome VARCHAR(100) NOT NULL,
+    matricula BIGINT NOT NULL,
     telefone VARCHAR(20),
     email VARCHAR(100) NOT NULL,
-    email_recuperacao VARCHAR(100) NOT NULL,
     senha VARCHAR(255) NOT NULL,
     cargo VARCHAR(50),
     id_departamento INTEGER,
-    ativo BOOLEAN,
-    data_nascimento DATE NOT NULL,
-    create_at DATE NOT NULL,
+    ativo BOOLEAN
 );
 
 CREATE TABLE departamentos (

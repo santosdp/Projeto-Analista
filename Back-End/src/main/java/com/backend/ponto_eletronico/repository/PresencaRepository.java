@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PresencaRepository extends JpaRepository<Presenca, Long> {
-  Optional<Presenca> findByDia(LocalDate dia);
 
   Optional<Presenca> findByDiaAndUsuario(LocalDate dia, Usuario usuario);
 

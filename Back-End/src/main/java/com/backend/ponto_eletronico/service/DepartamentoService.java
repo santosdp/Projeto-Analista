@@ -1,9 +1,6 @@
 package com.backend.ponto_eletronico.service;
 
-import com.backend.ponto_eletronico.dto.AtualizarDepartamentoDTO;
-import com.backend.ponto_eletronico.dto.DepartamentoDTO;
-import com.backend.ponto_eletronico.dto.DetalhamentoDepartamentoDTO;
-import com.backend.ponto_eletronico.dto.DetalhamentoUsuarioDTO;
+import com.backend.ponto_eletronico.dto.*;
 import com.backend.ponto_eletronico.model.Departamento;
 import com.backend.ponto_eletronico.model.Usuario;
 import com.backend.ponto_eletronico.repository.DepartamentoRepository;
@@ -58,5 +55,6 @@ public class DepartamentoService {
 
     return new DetalhamentoDepartamentoDTO(departamento);
   }
+
 
 }

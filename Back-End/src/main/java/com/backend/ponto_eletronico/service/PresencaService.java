@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,9 @@ public class PresencaService {
 
   public DetalharPresencaDTO registrarPresenca(Long id) {
     LocalDate dia = LocalDate.now();
+    if(dia.getDayOfWeek() == DayOfWeek.SUNDAY || dia.getDayOfWeek() == DayOfWeek.SATURDAY){
+      throw new IllegalArgumentException("Registro de presença não permitido em fins de semana.");
+    }
     Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
     Optional<Presenca> presencaOptional = presencaRepository.findByDiaAndUsuario(dia, usuario);
     Presenca presenca;
@@ -43,9 +47,9 @@ public class PresencaService {
   }
 
   public DetalharPresencaDTO justificarPresenca(JustificarPresencaDTO justificarPresencaDTO) {
-    Usuario usuario = usuarioRepository.findById(justificarPresencaDTO.id_usuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+    Usuario usuario = usuarioRepository.findByMatricula(justificarPresencaDTO.matricula_usuario()).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
     Presenca presenca = presencaRepository.findByDiaAndUsuario(justificarPresencaDTO.dia(), usuario).orElseThrow(() -> new EntityNotFoundException("Presença não encontrada."));
-    presenca.setJustificativa(justificarPresencaDTO.justificativa());
+    presenca.justificarPresenca(justificarPresencaDTO.ponto(), justificarPresencaDTO.justificativa());
     presencaRepository.save(presenca);
 
     return new DetalharPresencaDTO(presenca);

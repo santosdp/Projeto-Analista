@@ -33,7 +33,10 @@ public class UsuarioService {
         UsuarioDTO.matricula(),
         UsuarioDTO.telefone(),
         UsuarioDTO.email(),
-        securityConfiguration.passwordEncoder().encode(UsuarioDTO.senha())
+        securityConfiguration.passwordEncoder().encode(UsuarioDTO.senha()),
+        UsuarioDTO.cpf(),
+        UsuarioDTO.data_nascimento(),
+        UsuarioDTO.email_recuperacao()
     );
     usuario.setDepartamento(usuarioDepartamento);
     usuarioDepartamento.addUsuario(usuario);
