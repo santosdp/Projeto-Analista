@@ -1,5 +1,5 @@
 <template>
-  <q-page class="column items-center justify-start full-width">
+  <q-page class="column items-center justify-start">
     <div class="q-pt-md q-px-lg row justify-start full-width">
       <p class="text-weight-bold text-h6 text-secondary">
         Consulta de Registro de Ponto

@@ -46,6 +46,7 @@ const routes: RouteRecordRaw[] = [
         component: JustificarPage,
       },
     ],
+    meta: { requiresAuth: true },
   },
   {
     path: '/:catchAll(.*)*',

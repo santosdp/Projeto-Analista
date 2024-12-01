@@ -19,7 +19,7 @@
           title="Dados pessoais"
           icon="person"
           :done="registerStepperStep > 1"
-          :error="registerStepperStateForm1"
+          :error="!registerStepperStateForm1"
         >
           <q-form ref="registerForm1" class="column items-center">
             <generic-input
@@ -54,7 +54,7 @@
               icon-prepend="person"
               :is-dense="isDense"
               @keypress="onlyNumbers"
-              :rules="[requiredField, NomeValid]"
+              :rules="[requiredField, cpfValid]"
               class="input-register"
             ></generic-input>
           </q-form>
@@ -65,7 +65,7 @@
           title="Contato"
           icon="smartphone"
           :done="registerStepperStep > 2"
-          :error="registerStepperStateForm2"
+          :error="!registerStepperStateForm2"
         >
           <q-form ref="registerForm2" class="column items-center">
             <generic-input
@@ -130,7 +130,7 @@
           title="Contato"
           icon="security"
           :done="registerStepperStep > 3"
-          :error="registerStepperStateForm3"
+          :error="!registerStepperStateForm3"
         >
           <q-form ref="registerForm3" class="column items-center">
             <generic-input
@@ -154,7 +154,7 @@
               :visible-icon="visibleIcon1"
               hint="Ao menos 8 e no máximo 16 caracteres, letras maiúsculas e minúsculas, números e pelo menos um caractere especial, como ! @ #."
               :is-dense="isDense"
-              class="input-register"
+              class="input-register q-mb-lg"
               :rules="[
                 requiredField,
                 senhaValid1,
@@ -198,7 +198,6 @@
         </template>
       </q-stepper>
     </div>
-    <p>{{ registerFormCPF }}</p>
   </div>
 </template>
 
@@ -211,8 +210,7 @@
   max-width: 400px;
 }
 .input-register {
-  width: 80vw;
-  max-width: 250px;
+  width: 100%;
 }
 .q-input {
   border-radius: 8px;
@@ -227,6 +225,13 @@
 import { QStepper } from 'quasar';
 import { defineComponent, PropType, ref } from 'vue';
 import GenericInput from './GenericInput.vue';
+import { criarUsuario, listarDepartamentos } from 'src/services/authService';
+
+interface Departamento {
+  id_departamento: number;
+  nome_departamento: string;
+  nome_gerente: string;
+}
 
 export default defineComponent({
   name: 'CardRegister',
@@ -244,6 +249,7 @@ export default defineComponent({
   },
 
   setup() {
+    const departamentos = ref<Departamento[]>([]);
     return {
       registerStepperStep: ref<number>(1),
       registerStepperDone1: ref<boolean>(false),
@@ -258,21 +264,62 @@ export default defineComponent({
       registerFormCPF: ref<string>(''),
       registerFormEmail: ref<string>(''),
       registerFormEmailSecundario: ref<string>(''),
-      registerFormMatricula: ref<number>(),
+      registerFormMatricula: ref<number>(0),
       registerFormSenha: ref<string>(''),
       registerFormSenhaConfirm: ref<string>(''),
       registerFormTelefone: ref<string>(''),
-      registerFormDepartamento: [
-        'Tecnologia da Informação',
-        'Recursos Humanos',
-      ],
+      registerFormDepartamento: ref<string[]>([]),
 
-      departamentoSelect: ref<string>(),
+      departamentoSelect: ref<string>(''),
       visiblePwd1: ref<boolean>(true),
       visiblePwd2: ref<boolean>(true),
+      departamentos,
+      departamentoTeste: ref<string>('Recursos Humanos'),
     };
   },
   methods: {
+    async onSubmit() {
+      try {
+        await criarUsuario(
+          this.registerFormName,
+          this.registerFormMatricula,
+          this.registerFormEmail,
+          this.registerFormEmailSecundario,
+          this.registerFormTelefone,
+          this.registerFormSenha,
+          this.departamentoSelect,
+          this.registerFormCPF,
+          this.registerFormNascimento
+        );
+        this.$q.notify({
+          message: 'Usuário criado!',
+          color: 'positive',
+          icon: 'check_circle_outline',
+        });
+      } catch (error) {
+        this.$q.notify({
+          message: 'Falha ao criar usuário. Tente novamente.',
+          color: 'negative',
+          icon: 'ti-close',
+        });
+      }
+    },
+    async listarDepartamentos(): Promise<void> {
+      try {
+        const data = await listarDepartamentos();
+        this.registerFormDepartamento = data.map(
+          (departamento: { nome_departamento: string }) =>
+            departamento.nome_departamento
+        );
+      } catch (error) {
+        this.$q.notify({
+          message: 'Erro ao carregar a página. Por favor, recarregue a página.',
+          color: 'warning',
+          icon: 'ti-close',
+        });
+      }
+    },
+
     requiredField(val: string) {
       return !!val || 'Campo obrigatório';
     },
@@ -289,6 +336,11 @@ export default defineComponent({
     emailNormalValid(val: string) {
       const regex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return regex.test(val) || 'E-mail inválido';
+    },
+    cpfValid(val: string) {
+      const regex: RegExp =
+        /^(?!.*(\d)(?:-?\1){2})\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$/;
+      return regex.test(val) || 'CPF inválido';
     },
     telefoneValid(val: string) {
       const regex: RegExp = /^\(?\d{2}\)?[\s-]?\d{4,5}[\s-]?\d{4}$/;
@@ -398,17 +450,17 @@ export default defineComponent({
           state: 'stateForm3',
         },
       ];
-      const currentStep = this.registerStepperStep;
-      const currentForm = registerForms[currentStep - 1];
+      const currentStep = this.registerStepperStep - 1;
+      const currentForm = registerForms[currentStep];
 
       if (currentForm && currentForm.form) {
         currentForm.form.validate().then((success: boolean) => {
           if (currentForm.state == 'stateForm1') {
-            this.registerStepperStateForm1 = !success;
+            this.registerStepperStateForm1 = success;
           } else if (currentForm.state == 'stateForm2') {
-            this.registerStepperStateForm2 = !success;
+            this.registerStepperStateForm2 = success;
           } else {
-            this.registerStepperStateForm3 = !success;
+            this.registerStepperStateForm3 = success;
           }
         });
       }
@@ -421,7 +473,14 @@ export default defineComponent({
         this.registerStepperDone2 = true;
       } else {
         this.registerStepperDone3 = true;
-        this.$props.method();
+        if (
+          this.registerStepperStateForm1 &&
+          this.registerStepperStateForm2 &&
+          this.registerStepperStateForm3
+        ) {
+          this.onSubmit();
+          this.$props.method();
+        }
       }
       (this.$refs.stepper as QStepper).next();
     },
@@ -433,6 +492,9 @@ export default defineComponent({
       }
       (this.$refs.stepper as QStepper).previous();
     },
+  },
+  mounted() {
+    this.listarDepartamentos();
   },
 });
 </script>

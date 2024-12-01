@@ -40,7 +40,7 @@
       >
         <ClockComponent class="q-mr-md"></ClockComponent>
 
-        <div class="column items-center">
+        <div class="column items-center justify-center">
           <div
             class="clock-card-content q-py-sm q-my-sm column items-center"
             :class="isDense ? 'q-px-sm' : 'q-px-lg'"
@@ -50,18 +50,6 @@
             </p>
             <p class="text-h6 text-secondary text-weight-bold q-my-xs">
               {{ tempoTrabalhado }}
-            </p>
-          </div>
-
-          <div
-            class="clock-card-content q-py-sm q-my-sm column items-center"
-            :class="isDense ? 'q-px-sm' : 'q-px-lg'"
-          >
-            <p class="text-body1 text-secondary text-weight-light q-my-xs">
-              Tempo em intervalo
-            </p>
-            <p class="text-h6 text-secondary text-weight-bold q-my-xs">
-              {{ tempoIntervalo }}
             </p>
           </div>
         </div>

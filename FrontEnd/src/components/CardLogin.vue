@@ -41,13 +41,7 @@
           ]"
         ></generic-input>
 
-        <div class="row items-center justify-between">
-          <q-checkbox
-            v-model="rememberCheckbox"
-            label="Lembrar-se"
-            size="xs"
-          ></q-checkbox>
-
+        <div class="row items-center justify-end">
           <p class="q-pt-md"><a href="">Esqueceu sua senha?</a></p>
         </div>
 
@@ -68,8 +62,7 @@
   padding: 20px;
 }
 .input-login {
-  width: 80vw;
-  max-width: 300px;
+  width: 100%;
 }
 .card-login-item {
   max-width: 400px;
@@ -90,6 +83,8 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import GenericInput from './GenericInput.vue';
+import { useAuthStore } from 'src/stores/auth';
+import { loginUsuario } from 'src/services/authService';
 
 export default defineComponent({
   name: 'CardLogin',
@@ -113,7 +108,6 @@ export default defineComponent({
     return {
       emailInput: ref<string>(''),
       passwordInput: ref<string>(''),
-      rememberCheckbox: ref<boolean>(false),
       passwordVisible: ref<boolean>(false),
 
       visiblePwd: ref<boolean>(true),
@@ -121,8 +115,24 @@ export default defineComponent({
   },
 
   methods: {
-    onSubmit(): void {
-      this.$router.push('home');
+    async onSubmit(): Promise<void> {
+      const authStore = useAuthStore();
+      try {
+        const data = await loginUsuario(this.emailInput, this.passwordInput);
+        authStore.login(data.tokenJWT);
+        this.$q.notify({
+          message: 'Login realizado!',
+          color: 'positive',
+          icon: 'check_circle_outline',
+        });
+        this.$router.push('home');
+      } catch (error) {
+        this.$q.notify({
+          message: 'Erro ao realizar login. Tente novamente.',
+          color: 'negative',
+          icon: 'ti-close',
+        });
+      }
     },
 
     requiredField(val: string) {
