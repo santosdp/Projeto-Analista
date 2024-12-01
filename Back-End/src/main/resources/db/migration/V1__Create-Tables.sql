@@ -2,10 +2,10 @@ CREATE TABLE usuarios (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(120) NOT NULL,
     matricula BIGINT NOT NULL,
-    telefone VARCHAR(20),
+    telefone VARCHAR(20) UNIQUE,
     cpf VARCHAR(12) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL,
-    email_recuperacao VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    email_recuperacao VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
     cargo VARCHAR(50),
     id_departamento INTEGER,
@@ -16,7 +16,7 @@ CREATE TABLE usuarios (
 
 CREATE TABLE departamentos (
     id_departamento SERIAL PRIMARY KEY,
-    nome_departamento VARCHAR(100) NOT NULL,
+    nomedepartamento VARCHAR(100) NOT NULL UNIQUE,
     id_gerente INTEGER,
     FOREIGN KEY (id_gerente) REFERENCES usuarios(id) ON DELETE SET NULL
 );

@@ -27,7 +27,8 @@ public class UsuarioService {
   private SecurityConfiguration securityConfiguration;
 
   public DetalhamentoUsuarioDTO criarUsuario(UsuarioDTO UsuarioDTO) {
-    Departamento usuarioDepartamento = departamentoRepository.findById(UsuarioDTO.id_departamento()).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado."));
+    Departamento usuarioDepartamento = departamentoRepository.findByNomedepartamento(UsuarioDTO.nome_departamento()).orElseThrow(() -> new EntityNotFoundException("Departamento não encontrado."));
+    System.out.print(usuarioDepartamento);
     Usuario usuario = new Usuario(
         UsuarioDTO.nome(),
         UsuarioDTO.matricula(),

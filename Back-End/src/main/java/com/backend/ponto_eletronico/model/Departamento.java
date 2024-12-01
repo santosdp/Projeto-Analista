@@ -19,7 +19,7 @@ public class Departamento {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id_departamento;
 
-  private String nome_departamento;
+  private String nomedepartamento;
 
   @OneToMany(mappedBy = "departamento", cascade = CascadeType.PERSIST)
   private Set<Usuario> usuarios = new HashSet<>();
@@ -47,7 +47,7 @@ public class Departamento {
 
   public void atualizarDepartamento(AtualizarDepartamentoDTO atualizarDepartamentoDTO, Usuario gerente) {
     if(atualizarDepartamentoDTO.nome() != null) {
-      this.nome_departamento = atualizarDepartamentoDTO.nome();
+      this.nomedepartamento = atualizarDepartamentoDTO.nome();
     }
     if(gerente != null) {
       gerente.promoverUsuario();

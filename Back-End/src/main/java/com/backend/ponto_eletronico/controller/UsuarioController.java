@@ -21,7 +21,7 @@ public class UsuarioController {
   @Autowired
   private UsuarioService usuarioService;
 
-  @PostMapping
+  @PostMapping("/criar")
   @Transactional
   public ResponseEntity<DetalhamentoUsuarioDTO> criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO, UriComponentsBuilder uriBuilder){
     var usuario = usuarioService.criarUsuario(usuarioDTO);

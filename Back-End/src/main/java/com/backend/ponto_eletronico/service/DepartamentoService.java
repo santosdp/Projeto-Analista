@@ -7,9 +7,9 @@ import com.backend.ponto_eletronico.repository.DepartamentoRepository;
 import com.backend.ponto_eletronico.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class DepartamentoService {
@@ -39,8 +39,8 @@ public class DepartamentoService {
     return new DetalhamentoDepartamentoDTO(departamento);
   }
 
-  public Page<DetalhamentoDepartamentoDTO> listarDepartamentos(Pageable paginacao) {
-    return departamentoRepository.findAll(paginacao).map(DetalhamentoDepartamentoDTO::new);
+  public List<DetalhamentoDepartamentoDTO> listarDepartamentos() {
+    return departamentoRepository.findAll().stream().map(DetalhamentoDepartamentoDTO::new).toList();
   }
 
   public DetalhamentoDepartamentoDTO atualizarDepartamento(AtualizarDepartamentoDTO atualizarDepartamentoDTO) {

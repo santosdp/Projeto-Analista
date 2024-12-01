@@ -22,7 +22,7 @@ public record UsuarioDTO(
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@tjam\\.jus\\.br$\n", message = "Obrigatório utilizar e-mail do TJAM.")
     String email,
 
-    @NotBlank(message = "E-mail é obrigatório.")
+    @NotBlank(message = "E-mail de recuperação é obrigatório.")
     @Size(max = 100, message = "E-mail ultrapassou 100 caracteres.")
     @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Email inválido.")
     String email_recuperacao,
@@ -35,14 +35,14 @@ public record UsuarioDTO(
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$", message = "A senha deve conter letras minúsculas e maiúsculas, números, caracteres especiais e possuir entre 8 à 16 caracteres.")
     String senha,
 
-    @NotNull(message = "Id do Departamento é obrigatório.")
-    Long id_departamento,
+    @NotBlank(message = "Nome de departamento é obrigatório.")
+    String nome_departamento,
 
     @NotBlank(message = "CPF é obrigatório.")
     @Pattern(regexp = "^(?!.*(\\d)(?:-?\\1){2})\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{11}$")
     String cpf,
 
-    @NotBlank(message = "Data de nascimento é obrigatório.")
+    @NotNull(message = "Data de nascimento é obrigatório.")
     LocalDate data_nascimento
 
 ) {

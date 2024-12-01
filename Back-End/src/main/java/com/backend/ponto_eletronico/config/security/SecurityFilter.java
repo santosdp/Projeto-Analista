@@ -1,6 +1,8 @@
 package com.backend.ponto_eletronico.config.security;
 
+import com.backend.ponto_eletronico.model.Usuario;
 import com.backend.ponto_eletronico.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +30,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     if(tokenJWT != null) {
       var subject = tokenService.getSubject(tokenJWT);
-      var usuario = usuarioRepository.findByEmail(subject);
+      Usuario usuario_long = usuarioRepository.findById(subject).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+      var usuario = usuarioRepository.findByEmail(usuario_long.getEmail());
       var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }

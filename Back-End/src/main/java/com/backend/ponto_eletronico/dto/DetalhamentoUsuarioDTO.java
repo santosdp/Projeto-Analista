@@ -16,6 +16,6 @@ public record DetalhamentoUsuarioDTO(
     Cargo cargo,
     DetalhamentoDepartamentoDTO departamento) {
   public DetalhamentoUsuarioDTO(Usuario usuario) {
-    this(usuario.getId(),usuario.getNome(), usuario.getMatricula(), usuario.getCpf(), usuario.getEmail(),usuario.getEmail_recuperacao(), usuario.getData_nascimento(), usuario.getCargo(), new DetalhamentoDepartamentoDTO(usuario.getDepartamento().getId_departamento(), usuario.getDepartamento().getNome_departamento(), usuario.getDepartamento().getGerente().getNome()));
+    this(usuario.getId(),usuario.getNome(), usuario.getMatricula(), usuario.getCpf(), usuario.getEmail(),usuario.getEmail_recuperacao(), usuario.getData_nascimento(), usuario.getCargo(), new DetalhamentoDepartamentoDTO(usuario.getDepartamento().getId_departamento(), usuario.getDepartamento().getNomedepartamento(), usuario.getDepartamento().getGerente().getNome()));
   }
 }
